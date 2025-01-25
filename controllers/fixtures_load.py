@@ -11,16 +11,29 @@ fixtures_load = Blueprint('fixtures_load', __name__,
 @fixtures_load.route('/base/init')
 def fct_fixtures_load():
     mycursor = get_db().cursor()
-    sql='''DROP TABLE IF EXISTS ligne_commande;
-DROP TABLE IF EXISTS ligne_panier;
-DROP TABLE IF EXISTS vetement;
-DROP TABLE IF EXISTS type_vetement;
-DROP TABLE IF EXISTS taille;
-DROP TABLE IF EXISTS commande ;
-DROP TABLE IF EXISTS etat ;
-DROP TABLE IF EXISTS utilisateur ;   '''
+    db = get_db()
+    
+    # Suppression des tables dans l'ordre (en respectant les contraintes de clés étrangères)
+    tables_to_drop = [
+        'ligne_commande',
+        'ligne_panier',
+        'commande',
+        'vetement',
+        'type_vetement',
+        'taille',
+        'etat',
+        'utilisateur'
+    ]
+    
+    for table in tables_to_drop:
+        try:
+            sql = f"DROP TABLE IF EXISTS {table}"
+            mycursor.execute(sql)
+            db.commit()
+        except Exception as e:
+            print(f"Erreur lors de la suppression de la table {table}: {str(e)}")
+            continue
 
-    mycursor.execute(sql)
     sql='''
     CREATE TABLE utilisateur(
    id_utilisateur INT AUTO_INCREMENT,
