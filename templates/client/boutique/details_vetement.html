@@ -1,0 +1,43 @@
+{% extends 'client/layout_client.html' %}
+
+{% block title %}
+    <title>Détails du vêtement</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Détails du vêtement</h3>
+                {% if vetement %}
+                    <div class="card">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                {% if vetement.image %}
+                                    <img class="card-img" src="{{ url_for('static', filename='images/' + vetement.image) }}" alt="Image du vêtement">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ vetement.nom_vetement }}</h5>
+                                    <p class="card-text">
+                                        <strong>Prix :</strong> {{ vetement.prix_vetement }} €<br>
+                                        <strong>Type :</strong> {{ vetement.libelle_type_vetement }}<br>
+                                        <strong>Taille :</strong> {{ vetement.taille_id }}<br>
+                                        <strong>Matière :</strong> {{ vetement.matiere }}<br>
+                                        <strong>Description :</strong> {{ vetement.description }}<br>
+                                        <strong>Fournisseur :</strong> {{ vetement.fournisseur }}<br>
+                                        <strong>Marque :</strong> {{ vetement.marque }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Vêtement non trouvé.</p>
+                {% endif %}
+                <a href="{{ url_for('client_vetement.show_vetements') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

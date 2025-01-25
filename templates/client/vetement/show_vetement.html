@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Liste des Vêtements
+{% endblock %}
+{% block body %}
+    <h2>Liste des Vêtements</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Prix</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vetement in vetements %}
+                <tr>
+                    <td>{{ vetement.nom }}</td>
+                    <td>{{ vetement.type_libelle }}</td>
+                    <td>{{ vetement.prix }} €</td>
+                    <td>{{ vetement.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %} 

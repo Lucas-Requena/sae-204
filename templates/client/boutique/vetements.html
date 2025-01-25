@@ -1,0 +1,43 @@
+{% extends 'client/layout_client.html' %}
+
+{% block title %}
+    <title>Liste des vêtements</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                {% include 'client/boutique/_filtre.html' %}
+            </div>
+            
+            <div class="col-md-9">
+                <h3>Liste des vêtements</h3>
+                <div class="row">
+                    {% if vetements | length == 0 %}
+                        <p>Aucun vêtement trouvé.</p>
+                    {% else %}
+                        {% for vetement in vetements %}
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    {% if vetement.image %}
+                                        <img class="card-img-top" src="{{ url_for('static', filename='images/' + vetement.image) }}" alt="Image du vêtement">
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ vetement.nom_vetement }}</h5>
+                                        <p class="card-text">
+                                            Prix : {{ vetement.prix_vetement }} €<br>
+                                            Type : {{ vetement.libelle_type_vetement }}<br>
+                                            Taille : {{ vetement.taille_id }}
+                                        </p>
+                                        <a href="{{ url_for('client_vetement.details', id=vetement.id_vetement) }}" class="btn btn-primary">Voir détails</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

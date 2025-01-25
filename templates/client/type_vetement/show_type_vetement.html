@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Types de Vêtements
+{% endblock %}
+{% block body %}
+    <h2>Types de Vêtements</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for type in types_vetements %}
+                <tr>
+                    <td>{{ type.libelle }}</td>
+                    <td>{{ type.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %} 

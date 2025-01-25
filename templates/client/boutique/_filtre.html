@@ -1,0 +1,33 @@
+<div class="card">
+    <div class="card-header">
+        <h5>Filtres</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('client_vetement.show_vetements') }}" method="get">
+            <div class="form-group">
+                <label><strong>Types de vêtements</strong></label>
+                {% if items_filtre %}
+                    {% for type in items_filtre %}
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   name="type_vetement[]" 
+                                   value="{{ type.id_type_vetement }}"
+                                   id="type_{{ type.id_type_vetement }}"
+                                   {% if type.id_type_vetement|string in request.args.getlist('type_vetement[]') %}checked{% endif %}>
+                            <label class="form-check-label" for="type_{{ type.id_type_vetement }}">
+                                {{ type.libelle_type_vetement }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Aucun type de vêtement disponible</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Filtrer</button>
+            {% if request.args.getlist('type_vetement[]') %}
+                <a href="{{ url_for('client_vetement.show_vetements') }}" class="btn btn-secondary mt-3">Réinitialiser</a>
+            {% endif %}
+        </form>
+    </div>
+</div>
