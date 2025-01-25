@@ -59,6 +59,23 @@ INSERT INTO type_vetement (id_type_vetement, libelle_type_vetement) VALUES
                                                                         (4, 'Veste');'''
     mycursor.execute(sql)
 
+    sql='''
+CREATE TABLE taille(
+    id_taille INT AUTO_INCREMENT,
+    libelle_taille VARCHAR(255),
+    PRIMARY KEY (id_taille)
+)DEFAULT CHARSET utf8;'''
+    mycursor.execute(sql)
+
+    sql='''
+INSERT INTO taille (id_taille, libelle_taille) VALUES
+    (1, 'S'),
+    (2, 'M'),
+    (3, 'L'),
+    (4, 'XL'),
+    (5, 'XXL'),
+    (6, 'XXXL');'''
+    mycursor.execute(sql)
 
     sql=''' 
     CREATE TABLE etat(
