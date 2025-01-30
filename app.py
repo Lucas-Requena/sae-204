@@ -23,6 +23,14 @@ from controllers.admin_commentaire import *
 from controllers.client_liste_envies import *
 from connexion_db import get_db
 
+
+
+import os                                 # à ajouter
+from dotenv import load_dotenv            # à ajouter
+load_dotenv()                             # à ajouter
+
+
+
 app = Flask(__name__)
 app.secret_key = 'une cle(token) : grain de sel(any random string)'
 
