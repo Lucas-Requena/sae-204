@@ -1,11 +1,13 @@
+
 DROP TABLE IF EXISTS ligne_commande;
 DROP TABLE IF EXISTS ligne_panier;
+DROP TABLE IF EXISTS commande ;
 DROP TABLE IF EXISTS vetement;
 DROP TABLE IF EXISTS type_vetement;
 DROP TABLE IF EXISTS taille;
-DROP TABLE IF EXISTS commande ;
 DROP TABLE IF EXISTS etat ;
 DROP TABLE IF EXISTS utilisateur ;
+
 
 CREATE TABLE utilisateur(
                             id_utilisateur INT AUTO_INCREMENT,
