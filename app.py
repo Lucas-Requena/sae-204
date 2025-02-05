@@ -104,3 +104,14 @@ def show_types_vetements():
 if __name__ == '__main__':
     app.run()
 
+
+CREATEORREPLACETABLE `TD_tab` (
+   `colA` INTPRIMARYKEY,
+   colB VARCHAR(50)
+);
+SELECT colA,colBFROM TD_tab;
+SelecT colA,colBFroM TD_tab;
+SELECT Cola,ColbFROM TD_tab;
+SELECT colA,colBFROM td_tab;
+DROPTABLE TD_tab;
+
