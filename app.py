@@ -114,3 +114,6 @@ def show_types_vetements():
 if __name__ == '__main__':
     app.run()
 
+
+
+
