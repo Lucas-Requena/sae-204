@@ -101,6 +101,8 @@ def show_types_vetements():
     types_vetements = mycursor.fetchall()
     return render_template('client/type_vetement/show_type_vetement.html', types_vetements=types_vetements)
 
+
+
 if __name__ == '__main__':
     app.run()
 
