@@ -1,33 +1,34 @@
-<div class="card">
-    <div class="card-header">
-        <h5>Filtres</h5>
+<form method="post"  action="/client/panier/filtre"  style="display: inline-block">
+    <div class="form-group">
+        <input name="filter_word"  type="text" placeholder="Recherche" size="10" class="form-control"
+               value="{% if session['filter_word'] %}{{ session['filter_word'] }}{% endif %}"  >
     </div>
-    <div class="card-body">
-        <form action="{{ url_for('client_vetement.show_vetements') }}" method="get">
-            <div class="form-group">
-                <label><strong>Types de vêtements</strong></label>
-                {% if items_filtre %}
-                    {% for type in items_filtre %}
-                        <div class="form-check">
-                            <input class="form-check-input" 
-                                   type="checkbox" 
-                                   name="type_vetement[]" 
-                                   value="{{ type.id_type_vetement }}"
-                                   id="type_{{ type.id_type_vetement }}"
-                                   {% if type.id_type_vetement|string in request.args.getlist('type_vetement[]') %}checked{% endif %}>
-                            <label class="form-check-label" for="type_{{ type.id_type_vetement }}">
-                                {{ type.libelle_type_vetement }}
-                            </label>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Aucun type de vêtement disponible</p>
-                {% endif %}
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Filtrer</button>
-            {% if request.args.getlist('type_vetement[]') %}
-                <a href="{{ url_for('client_vetement.show_vetements') }}" class="btn btn-secondary mt-3">Réinitialiser</a>
-            {% endif %}
-        </form>
+   {% if items_filtre is defined %}
+    <div class="form-group">
+        <h4>Types de vetement</h4>
+        {% for item_filtre in items_filtre %}
+        <input type="checkbox" name="filter_types" value="{{ item_filtre.id_type_vetement }}"
+               {% if session['filter_types'] %}
+                   {{ ' checked ' if (item_filtre.id_type_vetement|string in session['filter_types']) else '' }}
+               {% endif %}
+            >  {{ item_filtre.libelle_type_vetement }}
+            <br/>
+        {% endfor %}
     </div>
-</div>
+    {% endif %}
+
+    <div class="form-group">
+        <h5>Prix :</h5>
+         <input name="filter_prix_min"  type="text" placeholder="min"  size="3"
+            value="{% if session['filter_prix_min'] %}{{ session['filter_prix_min'] }}{% endif %}" >
+
+       <input name="filter_prix_max"  type="text" placeholder="max"  size="3"
+             value="{% if session['filter_prix_max'] %}{{ session['filter_prix_max'] }}{% endif %}" >
+    </div>
+    <button type="submit" class="btn btn-primary" style="display: inline-block;">Filtrer</button>
+</form>
+{% if session['filter_word'] or session['filter_prix_max'] or session['filter_prix_min'] or session['filter_types']%}
+<form  action="/client/panier/filtre/suppr"  style="display: inline-block; margin: 5px;"  method="post" >
+<button class="btn btn-primary" > Supprimer filtre </button>
+</form>
+{% endif %}

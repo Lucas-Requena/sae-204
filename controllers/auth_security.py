@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
-import pymysql.cursors
+
 from flask import Blueprint
 from flask import Flask, request, render_template, redirect, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,9 +20,11 @@ def auth_login_post():
     mycursor = get_db().cursor()
     login = request.form.get('login')
     password = request.form.get('password')
-    tuple_select = (login,)
+    
     sql = "SELECT * FROM utilisateur WHERE login = %s"
-    retour = mycursor.execute(sql, tuple_select)
+    
+    retour = mycursor.execute(sql, (login,))
+    
     user = mycursor.fetchone()
     if user:
         mdp_ok = check_password_hash(user['password'], password)
@@ -37,7 +39,7 @@ def auth_login_post():
             if user['role'] == 'ROLE_admin':
                 return redirect('/admin/commande/index')
             else:
-                return redirect('/client/vetement/show')
+                return redirect('/client/article/show')
     else:
         flash(u'Vérifier votre login et essayer encore.', 'alert-warning')
         return redirect('/login')
@@ -54,7 +56,8 @@ def auth_signup_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login, email)
-    sql = """SELECT * FROM utilisateur WHERE login = %s OR email = %s"""
+    
+    sql = "SELECT * FROM utilisateur WHERE login = %s OR email = %s"
     retour = mycursor.execute(sql, tuple_select)
     user = mycursor.fetchone()
     if user:
@@ -64,6 +67,7 @@ def auth_signup_post():
     # ajouter un nouveau user
     password = generate_password_hash(password, method='pbkdf2:sha256')
     tuple_insert = (login, email, password, 'ROLE_client')
+    
     sql = """INSERT INTO utilisateur (login, email, password, role) VALUES (%s, %s, %s, %s)"""
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
@@ -78,7 +82,7 @@ def auth_signup_post():
     session['login'] = login
     session['role'] = 'ROLE_client'
     session['id_user'] = id_user
-    return redirect('/client/vetement/show')
+    return redirect('/client/article/show')
 
 
 @auth_security.route('/logout')

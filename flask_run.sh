@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # remplacer serveurmysql par localhost sur votre machine perso.
-# mysql --user=login --password=secret --host=localhost --database=BDD_login
+# mysql --user=login --password=secret --host=serveurmysql --database=BDD_login
 
 # pour tester votre application, lancer la commande dans un terminal : bash flask_run.sh
 
 HOST=localhost
 LOGIN=lrequena
 PASSWORD=mdp
-DATABASE=bdd_lrequena
+DATABASE=BDD_lrequena
 
 sed -i "s/host=.*/host=\"${HOST}\",/g" connexion_db.py
 sed -i "s/user=.*/user=\"${LOGIN}\",/g" connexion_db.py

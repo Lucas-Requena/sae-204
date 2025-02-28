@@ -38,8 +38,55 @@ def client_panier_add():
 
 # ajout dans le panier d'un article
 
+    sql = "SELECT * FROM ligne_panier WHERE vetement_id = %s AND utilisateur_id = %s"
+    mycursor.execute(sql, (id_article, id_client))
+    article_panier = mycursor.fetchone()
 
-    return redirect('/client/article/show')
+    # Récupérer les infos du vêtement et son stock
+    sql = "SELECT * FROM vetement WHERE id_vetement = %s"
+    mycursor.execute(sql, (id_article,))
+    vetement = mycursor.fetchone()
+
+    if article_panier and article_panier['quantite'] >= 1:
+        if vetement['stock'] >= int(quantite):
+            # Mettre à jour la quantité dans le panier
+            sql = "UPDATE ligne_panier SET quantite = quantite + %s WHERE utilisateur_id = %s AND vetement_id = %s"
+            mycursor.execute(sql, (quantite, id_client, id_article))
+            
+            # Mettre à jour le stock
+            sql = "UPDATE vetement SET stock = stock - %s WHERE id_vetement = %s"
+            mycursor.execute(sql, (quantite, id_article))
+        else:
+            flash("Stock insuffisant pour cette quantité")
+    else:
+        if vetement['stock'] >= int(quantite):
+            # Ajouter au panier
+            sql = "INSERT INTO ligne_panier (utilisateur_id, vetement_id, quantite, date_ajout) VALUES (%s, %s, %s, current_timestamp)"
+            mycursor.execute(sql, (id_client, id_article, quantite))
+            
+            # Mettre à jour le stock
+            sql = "UPDATE vetement SET stock = stock - %s WHERE id_vetement = %s"
+            mycursor.execute(sql, (quantite, id_article))
+
+    get_db().commit()
+
+    # Pour l'affichage du panier
+    sql = """
+    SELECT ligne_panier.*, vetement.nom, vetement.prix, vetement.stock 
+    FROM ligne_panier 
+    JOIN vetement ON ligne_panier.vetement_id = vetement.id_vetement 
+    WHERE ligne_panier.utilisateur_id = %s
+    """
+    mycursor.execute(sql, (id_client,))
+    articles_panier = mycursor.fetchall()
+
+    prix_total = sum(article['prix'] * article['quantite'] for article in articles_panier)
+
+    return render_template(
+        'client/boutique/_panier.html',
+        articles_panier=articles_panier,
+        prix_total=prix_total
+    )
 
 @client_panier.route('/client/panier/delete', methods=['POST'])
 def client_panier_delete():

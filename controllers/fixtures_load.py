@@ -23,6 +23,9 @@ def fct_fixtures_load():
     sql='''DROP TABLE IF EXISTS type_vetement;'''
     mycursor.execute(sql)
     mycursor = get_db().cursor()
+    sql='''DROP TABLE IF EXISTS taille;'''
+    mycursor.execute(sql)
+    mycursor = get_db().cursor()
     sql='''DROP TABLE IF EXISTS commande ;'''
     mycursor.execute(sql)
     mycursor = get_db().cursor()
@@ -53,6 +56,22 @@ def fct_fixtures_load():
                                                                           (3,'client2','client2@client2.fr',
                                                                            'pbkdf2:sha256:1000000$qDAkJlUehmaARP1S$39044e949f63765b785007523adcde3d2ad9c2283d71e3ce5ffe58cbf8d86080',
                                                                            'ROLE_client','client2');'''
+    mycursor.execute(sql)
+
+    sql='''CREATE TABLE taille(
+                              id_taille INT AUTO_INCREMENT,
+                              libelle_taille VARCHAR(255),
+                              PRIMARY KEY (id_taille)
+)DEFAULT CHARSET utf8;'''
+    mycursor.execute(sql)
+    sql=''' 
+INSERT INTO taille (id_taille, libelle_taille) VALUES
+                                                  (1, 'S'),
+                                                  (2, 'M'),
+                                                  (3, 'L'),
+                                                  (4, 'XL'),
+                                                  (5, 'XXL'),
+                                                  (6, 'XXXL');'''
     mycursor.execute(sql)
 
     sql='''CREATE TABLE type_vetement(
@@ -87,39 +106,39 @@ INSERT INTO etat (id_etat, libelle) VALUES
 
     sql = ''' 
     CREATE TABLE vetement(
-                         id_vetement INT AUTO_INCREMENT,
-                         nom_vetement VARCHAR(255),
-                         prix_vetement FLOAT,
-                         taille_id INT,
-                         type_vetement_id INT,
-                         matiere VARCHAR(255),
-                         description VARCHAR(255),
-                         fournisseur VARCHAR(255),
-                         marque VARCHAR(255),
-                         image VARCHAR(255),
-                         PRIMARY KEY (id_vetement),
-                         FOREIGN KEY (taille_id) REFERENCES taille(id_taille),
-                         FOREIGN KEY (type_vetement_id) REFERENCES type_vetement(id_type_vetement)
+    id_vetement INT AUTO_INCREMENT,
+    nom_vetement VARCHAR(255),
+    prix_vetement FLOAT,
+    taille_id INT,
+    type_vetement_id INT,
+    matiere VARCHAR(255),
+    description VARCHAR(255),
+    fournisseur VARCHAR(255),
+    marque VARCHAR(255),
+    photo VARCHAR(255),
+    stock INT,
+    PRIMARY KEY (id_vetement),
+    FOREIGN KEY (taille_id) REFERENCES taille(id_taille),
+    FOREIGN KEY (type_vetement_id) REFERENCES type_vetement(id_type_vetement)
 )DEFAULT CHARSET utf8;'''
     mycursor.execute(sql)
     sql = ''' 
-    INSERT INTO vetement (id_vetement, nom_vetement, prix_vetement, taille_id, type_vetement_id, matiere, description, fournisseur, marque, image) VALUES
-                                                                                                                                                   (1, 'Blouson bomber', 50,3,4, 'similicuir','osef','Henitex','Bershka','Bomber.jpg'),
-                                                                                                                                                   (2, 'Jean droit', 70, 1, 2, 'denim', 'Jean droit classique, confortable', 'Tissup', 'Levis', 'jeans_court.jpg'),
-                                                                                                                                                   (3, 'Blouson duvet', 80, 4, 4, 'plumes', 'Blouson 100% duvet', 'Cotontex', 'Zara', 'Blouson_duvet.jpg'),
-                                                                                                                                                   (4, 'Pantalon_chino', 50, 4, 2, 'tissu', 'Pantalon chino élégant et léger', 'Modechic', 'Zara', 'Pantalon_chino.jpg'),
-                                                                                                                                                   (5, 'Sweat à capuche', 70, 3, 3, 'polyester', 'Confortable et pratique', 'Cuirtex', 'Jack&jones', 'J&J1.png'),
-                                                                                                                                                   (6, 'Blouson retro', 90, 5, 4, 'velour', 'Style vintage intemporel', 'Semtex', 'Bershka', 'Blouson_retro.jpg'),
-                                                                                                                                                   (7, 'Sweat à capuche', 45, 2, 3, 'coton', 'Doux et cosy', 'Sweatstyle', 'Jack&Jones', 'J&J2.png'),
-                                                                                                                                                   (8, 'pantalon de costume', 50, 4, 2, 'denim', 'Élégance décontractée', 'Classicstyle', 'Zara', 'Costume.jpg'),
-                                                                                                                                                   (9, 'Pull tricoté', 65, 6, 3, 'laine', 'Chaud et stylé', 'Lainetex', 'Primark', 'image9.jpg'),
-                                                                                                                                                   (10, 'Blouson coton', 100, 3, 4, 'coton', 'Protection et confort', 'TNF', 'The North Face', 'TNF.jpg'),
-                                                                                                                                                   (11, 'Pantalon tech', 85, 3, 2, 'denim', 'Moderne et fonctionnel', 'Techstyle', 'Tokyo Techwear', 'tokyo_techwear.jpg'),
-                                                                                                                                                   (12, 'Jean slim', 55, 1, 2, 'tissu', 'Coupe ajustée, look casual', 'Jeanstex', 'Levis', 'jean_slim.jpg'),
-                                                                                                                                                   (13, 'Sweat à capuche', 70, 2, 3, 'polyester', 'Confort quotidien', 'Sweatstyle', 'Napapijri', 'napapijri.jpg'),
-                                                                                                                                                   (14, 'Polo_coton', 110, 3, 1, 'coton', 'Polo en coton, confortable et élégant', 'Polochic', 'Ralph Lauren', 'ralph_lauren.jpg'),
-                                                                                                                                                   (15, 'T-shirt classe', 60, 4, 1, 'coton', 'Simple et élégant', 'Makeittex', 'The Kooples', 'thekooples.jpg');
-
+    INSERT INTO vetement (id_vetement, nom_vetement, prix_vetement, taille_id, type_vetement_id, matiere, description, fournisseur, marque, photo, stock) VALUES
+(1, 'Blouson bomber', 50, 3, 4, 'similicuir', 'osef', 'Henitex', 'Bershka', 'Bomber.jpg', 100),
+(2, 'Jean droit', 70, 1, 2, 'denim', 'Jean droit classique, confortable', 'Tissup', 'Levis', 'jean_court.jpg', 75),
+(3, 'Blouson duvet', 80, 4, 4, 'plumes', 'Blouson 100% duvet', 'Cotontex', 'Zara', 'Blouson_duvet.jpg', 50),
+(4, 'Pantalon chino', 50, 4, 2, 'tissu', 'Pantalon chino élégant et léger', 'Modechic', 'Zara', 'Pantalon_chino.jpg', 120),
+(5, 'Sweat à capuche', 70, 3, 3, 'polyester', 'Confortable et pratique', 'Cuirtex', 'Jack&jones', 'J&J1.png', 85),
+(6, 'Blouson retro', 90, 5, 4, 'velour', 'Style vintage intemporel', 'Semtex', 'Bershka', 'Blouson_retro.jpg', 60),
+(7, 'Sweat à capuche', 45, 2, 3, 'coton', 'Doux et cosy', 'Sweatstyle', 'Jack&Jones', 'J&J2.png', 90),
+(8, 'Pantalon de costume', 50, 4, 2, 'denim', 'Élégance décontractée', 'Classicstyle', 'Zara', 'Costume.jpg', 70),
+(9, 'Pull tricoté', 65, 6, 3, 'laine', 'Chaud et stylé', 'Lainetex', 'Primark', 'image9.jpg', 40),
+(10, 'Blouson coton', 100, 3, 4, 'coton', 'Protection et confort', 'TNF', 'The North Face', 'TNF.jpg', 55),
+(11, 'Pantalon tech', 85, 3, 2, 'denim', 'Moderne et fonctionnel', 'Techstyle', 'Tokyo Techwear', 'tokyo_techwear.jpg', 65),
+(12, 'Jean slim', 55, 1, 2, 'tissu', 'Coupe ajustée, look casual', 'Jeanstex', 'Levis', 'jean_slim.jpg', 80),
+(13, 'Sweat à capuche', 70, 2, 3, 'polyester', 'Confort quotidien', 'Sweatstyle', 'Napapijri', 'napapijri.jpg', 45),
+(14, 'Polo coton', 110, 3, 1, 'coton', 'Polo en coton, confortable et élégant', 'Polochic', 'Ralph Lauren', 'ralph_lauren.jpg', 30),
+(15, 'T-shirt classe', 60, 4, 1, 'coton', 'Simple et élégant', 'Makeittex', 'The Kooples', 'thekooples.jpg', 95);
 '''
     mycursor.execute(sql)
 

@@ -9,12 +9,12 @@
 <div class="container">
     <div class="text-center card w-auto">
          <h2 class="card-title">
-             <span style="color: #0b2e13">{{ article.nom }}</span> &nbsp;{{ article.prix }} €
+             <span style="color: #0b2e13">{{ article.nom_vetement }}</span> &nbsp;{{ article.prix_vetement }} €
          </h2>
         <div class="card-body">
         {%  if article.image is not none %}
-            <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ article.image }}"  alt="image  de {{ article.nom }}" >
-        {% else %} <img class="card-img-top rounded mx-auto d-block"   style="width:100px;height:100px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="image  de {{ article.nom }}" >
+            <img class="card-img-top rounded mx-auto d-block"  style="width:100px;height:100px"  src="{{ url_for('static', filename = 'images/')}}{{ article.image }}"  alt="image  de {{ article.nom_vetement }}" >
+        {% else %} <img class="card-img-top rounded mx-auto d-block"   style="width:100px;height:100px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="image  de {{ article.nom_vetement }}" >
         {% endif %}
 
 
@@ -23,7 +23,15 @@
         {% endif %}
 
         </div>
-        <div class="card-footer text-left"><h6>Description : {{ article.description }}</h6></div>
+        <div class="card-footer text-left">
+            <h6>Description : 
+                {% if article.description is not none and article.description|length > 0 %}
+                    {{ article.description }}
+                {% else %}
+                    <em>Pas de description disponible</em>
+                {% endif %}
+            </h6>
+        </div>
     </div>
 
     <hr>  <!-- les notes -->
@@ -34,7 +42,7 @@
         {% if article.moyenne_notes is not defined or  article.nb_notes is not defined or  article.moyenne_notes == None %}
             <strong>Pas de Note</strong>
         {% else %}
-            <strong>Note moyenne de cet article : {{ article.moyenne_notes }}</strong>&nbsp;({{ article.nb_notes }} note(s))
+            <strong>Note moyenne de ce vêtement : {{ article.moyenne_notes }}</strong>&nbsp;({{ article.nb_notes }} note(s))
         {% endif %}
     </div>
         {% if commandes_articles.nb_commandes_article is defined and commandes_articles.nb_commandes_article > 0 %}
@@ -42,9 +50,9 @@
                 {% if note is defined and note is number %}
 
                     <form  action="/client/note/edit"   method="post" class="row">
-                    <input type="hidden" name="id_article" value="{{ article.id_article }}">
+                    <input type="hidden" name="id_article" value="{{ article.id_vetement }}">
                     <div class="col-md-3">
-                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Modifier votre note sur cet article : </label>
+                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Modifier votre note sur ce vêtement : </label>
                     </div>
                     <div class="col-md-1">
                         <input type="number" name="note" id="input_note" step="0.1" min="0" max="5" class="form-control col-md-2" value="{{ note }}" >
@@ -54,16 +62,16 @@
                      </div>
                     </form>
                     <form  action="/client/note/delete"   method="post" class="row">
-                    <input type="hidden" name="id_article" value="{{ article.id_article }}">
+                    <input type="hidden" name="id_article" value="{{ article.id_vetement }}">
                      <div class="col-md-2">
                          <button class="btn btn-primary" > Supprimer votre note </button>
                      </div>
                     </form>
                 {% else %}
                     <form  action="/client/note/add"   method="post" class="row">
-                    <input type="hidden" name="id_article" value="{{ article.id_article }}">
+                    <input type="hidden" name="id_article" value="{{ article.id_vetement }}">
                     <div class="col-md-3">
-                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Mettre une note  sur cet article : </label>
+                        <label for="input_note" class="d-flex justify-content-end align-items-end pe-3">Mettre une note sur ce vêtement : </label>
                     </div>
                     <div class="col-md-1">
                         <input type="number" name="note" id="input_note" step="0.1" min="0" max="5" class="form-control col-md-2" value="" >
@@ -74,7 +82,7 @@
                 {% endif %}
             </div>
         {% else %}
-            <small>(seul les clients qui ont acheté cet article peuvent le noter)</small>
+            <small>(seul les clients qui ont acheté ce vêtement peuvent le noter)</small>
         {% endif %}
     </div>
 
@@ -86,7 +94,7 @@
       {% if nb_commentaires.nb_commentaires_total is not defined or nb_commentaires.nb_commentaires_utilisateur is not defined %}
          <strong>NB commentaire(s) not defined</strong>
                 {% else %}
-            <strong>Nombre de commentaire(s) : {{ nb_commentaires.nb_commentaires_utilisateur }} commentaire(s) / 3 maxi pour un article acheté </strong><br>
+            <strong>Nombre de commentaire(s) : {{ nb_commentaires.nb_commentaires_utilisateur }} commentaire(s) / 3 maxi pour un vêtement acheté </strong><br>
             <strong>Nombre de commentaire(s) total :  {{nb_commentaires.nb_commentaires_total }}</strong><br>
           {% if nb_commentaires.nb_commentaires_utilisateur_valide is not defined or nb_commentaires.nb_commentaires_total_valide is not defined %}
                <strong>NB commentaire(s) valide(s) not defined</strong>
@@ -99,17 +107,17 @@
             ((nb_commentaires.nb_commentaires_utilisateur is defined and nb_commentaires.nb_commentaires_utilisateur <3) or nb_commentaires.nb_commentaires_utilisateur is not defined) %}
           <form  action="/client/commentaire/add"   method="post">
                 <div class="col">
-                  <label for="input_commentaire" class="form-label">Mettez un commentaire sur cet article : </label>
+                  <label for="input_commentaire" class="form-label">Mettez un commentaire sur ce vêtement : </label>
                      <textarea name="commentaire" class="form-control" aria-label="Votre commentaire" id="input_commentaire"  placeholder="Votre commentaire"></textarea>
                 </div>
               <input type="hidden" name="action" value="add_commentaire">
-              <input type="hidden" name="id_article" value="{{ article.id_article }}">
+              <input type="hidden" name="id_article" value="{{ article.id_vetement }}">
                 <form  action="/client/comment/add"  style="display: inline-block;"  method="post" >
                         <button class="btn btn-primary mt-2" > Ajouter un commentaire </button>
                 </form>
             </form>
         {% else %}
-            <small>(seul les clients qui ont acheté cet article peuvent le commenter ou nombre maxi de commentaires sur cet article (5) atteind)</small>
+            <small>(seul les clients qui ont acheté ce vêtement peuvent le commenter ou nombre maxi de commentaires sur ce vêtement (5) atteind)</small>
         {% endif %}
 
     </div>
@@ -164,6 +172,17 @@
     </div>
 </div>
 
-
+<!-- Pour déboguer -->
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h4>Informations de débogage</h4>
+        </div>
+        <div class="card-body">
+            <h5>Données de l'article :</h5>
+            <pre>{{ article|pprint }}</pre>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

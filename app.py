@@ -8,7 +8,7 @@ from flask import Blueprint
 from controllers.auth_security import *
 from controllers.fixtures_load import *
 
-from controllers.client_vetement import *
+from controllers.client_article import *
 from controllers.client_panier import *
 from controllers.client_commande import *
 from controllers.client_commentaire import *
@@ -21,15 +21,6 @@ from controllers.admin_type_article import *
 from controllers.admin_dataviz import *
 from controllers.admin_commentaire import *
 from controllers.client_liste_envies import *
-from connexion_db import get_db
-
-
-
-import os                                 # à ajouter
-from dotenv import load_dotenv            # à ajouter
-load_dotenv()                             # à ajouter
-
-
 
 app = Flask(__name__)
 app.secret_key = 'une cle(token) : grain de sel(any random string)'
@@ -48,7 +39,7 @@ def show_accueil():
         if session['role'] == 'ROLE_admin':
             return redirect('/admin/commande/index')
         else:
-            return redirect('/client/vetement/show')
+            return redirect('/client/article/show')
     return render_template('auth/layout.html')
 
 ##################
@@ -77,7 +68,7 @@ def before_request():
 app.register_blueprint(auth_security)
 app.register_blueprint(fixtures_load)
 
-app.register_blueprint(client_vetement)
+app.register_blueprint(client_article)
 app.register_blueprint(client_commande)
 app.register_blueprint(client_commentaire)
 app.register_blueprint(client_panier)
@@ -91,29 +82,7 @@ app.register_blueprint(admin_type_article)
 app.register_blueprint(admin_dataviz)
 app.register_blueprint(admin_commentaire)
 
-@app.route('/client/vetement/show')
-def show_vetements():
-    mycursor = get_db().cursor()
-    sql = '''SELECT vetement.*, type_vetement.libelle as type_libelle 
-             FROM vetement 
-             LEFT JOIN type_vetement ON vetement.id_type_vetement = type_vetement.id_type_vetement'''
-    mycursor.execute(sql)
-    vetements = mycursor.fetchall()
-    return render_template('client/vetement/show_vetement.html', vetements=vetements)
-
-@app.route('/client/types_vetement/show')
-def show_types_vetements():
-    mycursor = get_db().cursor()
-    sql = "SELECT * FROM type_vetement"
-    mycursor.execute(sql)
-    types_vetements = mycursor.fetchall()
-    return render_template('client/type_vetement/show_type_vetement.html', types_vetements=types_vetements)
-
-
 
 if __name__ == '__main__':
     app.run()
-
-
-
 
