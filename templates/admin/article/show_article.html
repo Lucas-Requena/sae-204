@@ -10,88 +10,74 @@ articles (tableau de dictionnaires)
 {% extends 'admin/layout_admin.html' %}
 
 {% block title %}
-    <title>afficher les articles</title>
+    <title>Liste des articles</title>
 {% endblock %}
 
 {% block body %}
-<h3>article</h3>
-<a  class="btn btn-outline-success" href="/admin/article/add">ajouter un article</a>
-<br><br>
-{#{{ articles }}#}
-<table class="table">
-    <thead class="thead-dark">
-        <tr>
-            <th>nom</th><th>id</th><th>type article (id)</th><th>prix</th><th style="color: green">stock</th>
-            <th>nouveaux avis</th><th>nb déclinaisons</th><th>image</th><th>opération</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% if articles | length >= 1 %}
-        {% for ligne in articles %}
-           <tr>
-                  <td>{{ ligne.nom }}</td>
-                  <td>{{ ligne.id_article }}</td>
-                  <td><span style="color: red">{{ ligne.libelle }}</span> ({{ ligne.type_article_id }})</td>
-                  <td>{#{ ligne.prix }#}  {{  "{:,.2f} €".format(ligne.prix) }}</td>
-                  <td>
-                  {% if ligne.stock is defined %}
-                     {% if ligne.stock != None  %}
-                        {% if ligne.stock > 0 %}
-                            <strong style="color: green">{{ ligne.stock }}</strong>
-                            {% if ligne.min_stock is defined  and ligne.min_stock <= 0 %}
-                                <span style="color: #fd7e14">(⚠️ déclinaison(s) en rupture)</span>
-                            {% endif %}
-                        {% else %}
-                            <strong class="text-muted">article momentanément indisponible</strong>
-                        {% endif %}
-                     {% else %}
-                             <strong class="text-muted">déclinaison ND</strong>
-                     {% endif %}
-                  {% else %}
-                      ND
-                  {% endif %}
-                  </td>
-                   <td>
-                  {% if ligne.nb_commentaires_nouveaux is defined %}
-                     {% if ligne.nb_commentaires_nouveaux > 0 %}
-                         <a href="/admin/article/commentaires?id_article={{ ligne.id_article }}"><strong style="color: red">{{ ligne.nb_commentaires_nouveaux }} avis non lu(s) ⚠️ </strong></a>
-                     {% else %}
-                        <strong class="text-muted"></strong>
-                     {% endif %}
-                  {% else %}
-                      nb_avis ND
-                  {% endif %}
-                  </td>
-
-                 {# <td>{{ ligne.date_create }} {{ ligne.date_create.strftime('%d-%m-%Y') }} </td> #}
-                  <td>
-                      {% if ligne.nb_declinaisons is defined %}
-                        {{ ligne.nb_declinaisons }}
-                      {% else %}
-                         decli ND
-                      {% endif %}
-                  </td>
-                  <td>{{ ligne.image }}
-                        {%  if ligne.image is not none %}
-                            <img style="width:40px;height:40px"  src="{{ url_for('static', filename = 'images/' + ligne['image']) }}"  alt="image  de {{ ligne.nom }}" >
-                        {% else %}
-                            <img style="width:40px;height:40px"   src="{{ url_for('static', filename='images/no_photo.jpeg')}}"  alt="pas d image" >
-                        {% endif %}
-                  </td>
-                  <td>
-                      <a  class="btn btn-outline-danger" href="/admin/article/delete?id_article={{ ligne.id_article }}" onclick="return confirm('Are you sure?')" >supprimer</a>
-                      <a  class="btn btn-outline-warning" href="/admin/article/edit?id_article={{ ligne.id_article }}">editer</a>
-                      <a  class="btn btn-outline-warning" href="/admin/article/commentaires?id_article={{ ligne.id_article }}">commentaires</a>
-                  </td>
-           </tr>
-        {% endfor %}
-    {% else %}
-            <tr>
-                  <td>
-                      pas d'article
-                  </td>
-           </tr>
-    {% endif %}
-    </tbody>
-</table>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>Liste des articles</h2>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        <table class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr class="headings">
+                                    <th class="column-title">Image</th>
+                                    <th class="column-title">Nom</th>
+                                    <th class="column-title">Type</th>
+                                    <th class="column-title">Taille</th>
+                                    <th class="column-title">Prix</th>
+                                    <th class="column-title">Stock</th>
+                                    <th class="column-title no-link last"><span class="nobr">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ligne in articles %}
+                                <tr class="even pointer">
+                                    <td>
+                                        {% if ligne.image %}
+                                            <img src="/static/images/{{ ligne.image }}" alt="{{ ligne.nom }}" style="max-width: 100px;">
+                                        {% else %}
+                                            <img src="/static/images/no-image.png" alt="Pas d'image" style="max-width: 100px;">
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ ligne.nom }}</td>
+                                    <td>{{ ligne.type }}</td>
+                                    <td>{{ ligne.taille }}</td>
+                                    <td>{{ ligne.prix }} €</td>
+                                    <td>
+                                        <form method="post" action="/admin/article/stock/quick_edit" class="form-inline">
+                                            <input type="hidden" name="id_article" value="{{ ligne.id_article }}">
+                                            <input type="hidden" name="referer" value="/admin/article/show">
+                                            <div class="input-group">
+                                                <input type="number" name="stock" value="{{ ligne.stock }}" class="form-control" style="width: 70px;">
+                                                <span class="input-group-btn">
+                                                    <button type="submit" class="btn btn-primary btn-sm">✓</button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/article/edit?id_article={{ ligne.id_article }}" class="btn btn-info btn-sm">Modifier</a>
+                                        <a href="/admin/article/delete?id_article={{ ligne.id_article }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">Supprimer</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center">
+                        <a href="/admin/article/add" class="btn btn-success">Ajouter un article</a>
+                        <a href="/admin/article/stock" class="btn btn-primary">Gérer les stocks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

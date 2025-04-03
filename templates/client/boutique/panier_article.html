@@ -108,9 +108,14 @@
                                         <td colspan="3" class="text-right"><strong>Total:</strong></td>
                                         <td><strong>{{ prix_total|round(2) }} €</strong></td>
                                         <td>
-                                            <form action="/client/panier/vider" method="post">
-                                                <button type="submit" class="btn btn-danger">Vider le panier</button>
-                                            </form>
+                                            <div class="d-flex flex-column">
+                                                <form action="/client/panier/vider" method="post" class="mb-2">
+                                                    <button type="submit" class="btn btn-danger">Vider le panier</button>
+                                                </form>
+                                                <form action="/client/commande/valide" method="post">
+                                                    <button type="submit" class="btn btn-success">Passer ma commande</button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 </tfoot>

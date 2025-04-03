@@ -21,7 +21,7 @@
                             </td>
                             <td>{{item_panier.quantite}}</td>
                             <td>{{item_panier.prix}}</td>
-                            <td>{{ "{:,.2f} €".format((item_panier.prix * item_panier.quantite)) }}{#{(panier.article.prix * panier.quantite)|number_format(2) }#}</td>
+                            <td>{{ "{:,.2f} €".format((item_panier.prix * item_panier.quantite)) }}</td>
                             <td>
                                 {% if item_panier.stock > 0 %}
                                     <form action="/client/panier/add" style="display: inline-block;" method="post">
@@ -45,27 +45,95 @@
                     {% endfor %}
 
                 </table>
+                <div class="mt-3">
                     {% if validation is defined and validation == 1 %}
                         <a href="/client/article/show" class="btn btn-primary" >Continuer ma commande</a>
                     {% else %}
-                    <form action="/client/panier/vider"  style="display: inline-block;"  method="post" >
-                        <button class="btn btn-primary"  > Éffacer tout </button>
-                    </form>
-                    <form action="/client/commande/valide"  style="display: inline-block;"  method="post" >
-                        <button class="btn btn-primary" > Passer ma commande </button>
-                    </form>
+                        <div class="d-flex flex-wrap">
+                            <form action="/client/panier/vider" method="post" class="mr-2 mb-2">
+                                <button class="btn btn-danger"> Éffacer tout </button>
+                            </form>
+                            <form action="/client/commande/valide" method="post" class="mr-2 mb-2">
+                                <button class="btn btn-success"> Passer ma commande </button>
+                            </form>
+                        </div>
                     {% endif %}
                     {% if prix_total %}
-                    Total à payer : <strong>{{ "{:,.2f} €".format(prix_total) }}</strong>
+                        <div class="mt-2">
+                            Total à payer : <strong>{{ "{:,.2f} €".format(prix_total) }}</strong>
+                        </div>
                     {% endif %}
-
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    Votre panier est vide. <a href="/client/article/show">Parcourir les articles</a>
+                </div>
             {% endif %}
             </div>
 
 <div class="card-footer">
     {% if vetement.stock > 0 %}
-        <small class="text-muted">Stock restant : {{ vetement.stock }}</small>
+        <small class="text-muted">Stock restants : {{ vetement.stock }}</small>
     {% else %}
         <small class="text-muted">Article momentanément indisponible</small>
+    {% endif %}
+</div>
+
+<div class="container mt-4">
+    <h2>Votre panier</h2>
+    
+    {% if articles_panier|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Prix total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles_panier %}
+                <tr>
+                    <td><img src="{{ url_for('static', filename='images/' + article['photo']) }}" alt="{{ article['nom_vetement'] }}" width="100"></td>
+                    <td>{{ article['nom_vetement'] }}</td>
+                    <td>{{ article['prix'] }} €</td>
+                    <td>
+                        <form action="/client/panier/update" method="post" class="form-inline">
+                            <input type="hidden" name="id_vetement" value="{{ article['vetement_id'] }}">
+                            <input type="number" name="quantite" value="{{ article['quantite'] }}" min="1" class="form-control form-control-sm" style="width: 60px;">
+                            <button type="submit" class="btn btn-sm btn-primary ml-2">Modifier</button>
+                        </form>
+                    </td>
+                    <td>{{ article['prix_ligne'] }} €</td>
+                    <td>
+                        <a href="/client/panier/delete?id_vetement={{ article['vetement_id'] }}" class="btn btn-sm btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-right"><strong>Total :</strong></td>
+                    <td><strong>{{ prix_total }} €</strong></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <a href="/client/article/show" class="btn btn-secondary">Continuer mes achats</a>
+            
+            <!-- Bouton pour valider la commande -->
+            <form action="/client/commande/valide" method="post">
+                <button type="submit" class="btn btn-success">Valider ma commande</button>
+            </form>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Votre panier est vide. <a href="/client/article/show">Parcourir les articles</a>
+        </div>
     {% endif %}
 </div>
